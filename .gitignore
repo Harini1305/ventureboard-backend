@@ -1,0 +1,57 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+/bin/
+/lib/
+/include/
+/pip-selfcheck.json
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local configuration
+.env
+.env.local
+
+# Databases & local stores
+data/
+*.json
+*.json.tmp
+db.sqlite3
+
+# Uploads & Temp files
+uploads/
+reports/
+generated_reports/
+temp/
