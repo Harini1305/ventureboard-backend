@@ -117,11 +117,22 @@ def add_audit_log(agent_name: str, status: str, exec_time: float, success: bool)
         app.state.report['audit_trail'] = app.state.audit_trail
 
 
-def sync_client_report(report_data: Dict[str, Any] | None):
+def sync_client_report(report_data: Dict[str, Any] | None, session_id: str | None = None):
     if not report_data:
         return
     app.state.report = report_data
     app.state.audit_trail = report_data.get('audit_trail', [])
+    if session_id:
+        app.state.session_id = session_id
+        if session_id not in app.state.sessions:
+            app.state.sessions[session_id] = {
+                'report': report_data,
+                'chat_history': report_data.get('chat_history', []),
+                'vector_store': SimpleVectorStore(collection_name=f"ventureboard_{session_id}"),
+                'simulations': report_data.get('simulations', []),
+                'audit_trail': report_data.get('audit_trail', [])
+            }
+        app.state.vector_store = app.state.sessions[session_id]['vector_store']
 
 
 class ChatRequest(BaseModel):
@@ -358,6 +369,17 @@ def get_report() -> Dict[str, Any]:
         report_data = app.state.report
         report_data['audit_trail'] = getattr(app.state, 'audit_trail', [])
         return report_data
+
+
+class SyncRequest(BaseModel):
+    report: Dict[str, Any]
+    session_id: str | None = None
+
+
+@app.post('/api/report')
+def post_report(payload: SyncRequest) -> Dict[str, Any]:
+    sync_client_report(payload.report, payload.session_id)
+    return {'ok': True}
     return {
         'executive_summary': 'No analysis has been generated yet.',
         'investment_recommendation': 'Pending',
